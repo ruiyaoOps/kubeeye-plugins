@@ -19,7 +19,7 @@ spec:
     listKind: KubeBenchList
     plural: kubebenches
     singular: kubebench
-  scope: Namespaced
+  scope: Cluster
   versions:
   - name: v1alpha1
     schema:
@@ -387,7 +387,7 @@ spec:
         - --health-probe-bind-address=:8081
         - --metrics-bind-address=127.0.0.1:8080
         - --leader-elect
-        image: kubesphere.io/kube-bench:latest
+        image: 140256951yaorui/kubeeye-kube-bench:latest
         livenessProbe:
           httpGet:
             path: /healthz

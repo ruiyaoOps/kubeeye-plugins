@@ -58,7 +58,7 @@ type KubeBenchReconciler struct {
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.11.0/pkg/reconcile
 func (r *KubeBenchReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	logs := log.FromContext(ctx)
-	logs.Info("start kube-bench audit")
+	logs.Info("starting KubeBench audit")
 
 	kubebench := &kubeeyev1alpha1.KubeBench{}
 	if err := r.Get(ctx, req.NamespacedName, kubebench); err != nil {
@@ -79,6 +79,8 @@ func (r *KubeBenchReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 		logs.Error(err, "Update CR Status failed")
 		return ctrl.Result{}, err
 	}
+
+	logs.Info("KubeBench audit completed")
 
 	// If auditPeriod is not set, set the default value to 24h
 	if kubebench.Spec.AuditPeriod == "" {

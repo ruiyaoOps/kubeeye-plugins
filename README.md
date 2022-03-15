@@ -1,2 +1,2 @@
 # kubeeye-plugins
-A repository of plugins for the kubeEye UI
+A repository of plugins for the kubeEye

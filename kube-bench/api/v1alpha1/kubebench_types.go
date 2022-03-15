@@ -62,6 +62,7 @@ type Check struct {
 
 //+kubebuilder:object:root=true
 //+kubebuilder:subresource:status
+//+kubebuilder:resource:path=kubebenches,scope=Cluster
 
 // KubeBench is the Schema for the kubebenches API
 type KubeBench struct {

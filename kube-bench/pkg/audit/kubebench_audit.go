@@ -15,7 +15,6 @@ type KubeBenchResponse struct {
 }
 
 func KubeBenchAudit(log logr.Logger) (controls KubeBenchResponse) {
-	log.Info("starting KubeBench audit")
 	// exec KubeBench audit, put the result into cmd
 	cmd := exec.Command("kube-bench", "--json")
 	// get the response from cmd.Output(), it contains the result of KubeBench audit
