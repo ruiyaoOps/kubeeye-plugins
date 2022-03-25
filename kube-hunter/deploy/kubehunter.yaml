@@ -1,0 +1,13 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: kubeeye-kubehunter
+  namespace: kubeeye-system
+spec:
+  template:
+    spec:
+      containers:
+      - image: 140256951yaorui/kubeeye-kube-bench:latest
+        name: kubeeye-kubehunter
+        resources: {}
+      restartPolicy: Never

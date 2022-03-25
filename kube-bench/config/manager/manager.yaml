@@ -27,7 +27,11 @@ spec:
       securityContext:
         runAsNonRoot: true
       containers:
-      - image: controller:latest
+      - command:
+          - /usr/local/bin/ke-kubebench
+        args:
+        - --leader-elect
+        image: controller:latest
         name: manager
         securityContext:
           allowPrivilegeEscalation: false

@@ -17,7 +17,6 @@ limitations under the License.
 package v1alpha1
 
 import (
-	"github.com/aquasecurity/kube-bench/check"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -37,27 +36,28 @@ type KubeBenchSpec struct {
 type KubeBenchStatus struct {
 	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
-	Controls []Controls `json:"controls,omitempty"`
+	AuditResults []AuditResults `json:"auditResults,omitempty"`
 }
 
-type Controls struct {
-	Version       string  `json:"version"`
-	Text          string  `json:"text"`
-	Groups        []Group `json:"groups"`
-	check.Summary `json:"summary"`
+type AuditResults struct {
+	NameSpace   string        `json:"namespace"`
+	ResultInfos []ResultInfos `json:"resultInfos,omitempty"`
 }
 
-type Group struct {
-	ID     string  `json:"groupid"`
-	Text   string  `json:"type"`
-	Checks []Check `json:"results"`
+type ResultInfos struct {
+	ResourceType  string `json:"resourceType"`
+	ResourceInfos `json:"resourceInfos"`
 }
 
-type Check struct {
-	ID          string `yaml:"id" json:"id"`
-	Text        string `json:"desc"`
-	Remediation string `json:"remediation"`
-	check.State `json:"status"`
+type ResourceInfos struct {
+	Name        string        `json:"name,omitempty"`
+	ResultItems []ResultItems `json:"items"`
+}
+
+type ResultItems struct {
+	Level   string `json:"level,omitempty"`
+	Message string `json:"message,omitempty"`
+	Reason  string `json:"reason,omitempty"`
 }
 
 //+kubebuilder:object:root=true

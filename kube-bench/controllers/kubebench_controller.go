@@ -21,6 +21,7 @@ import (
 	"time"
 
 	"github.com/ruiyaoOps/kubeeye-plugins/kube-bench/pkg/audit"
+	"github.com/ruiyaoOps/kubeeye-plugins/kube-bench/pkg/format"
 	kubeErr "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -39,13 +40,6 @@ type KubeBenchReconciler struct {
 //+kubebuilder:rbac:groups=kubeeye.kubesphere.io,resources=kubebenches,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups=kubeeye.kubesphere.io,resources=kubebenches/status,verbs=get;update;patch
 //+kubebuilder:rbac:groups=kubeeye.kubesphere.io,resources=kubebenches/finalizers,verbs=update
-//+kubebuilder:rbac:groups="",resources=nodes,verbs=*
-//+kubebuilder:rbac:groups="",resources=namespaces,verbs=*
-//+kubebuilder:rbac:groups="",resources=events,verbs=*
-//+kubebuilder:rbac:groups=batch,resources=*,verbs=*
-//+kubebuilder:rbac:groups=apps,resources=*,verbs=*
-//+kubebuilder:rbac:groups=rbac.authorization.k8s.io,resources=*,verbs=*
-//+kubebuilder:rbac:groups=storage.k8s.io,resources=*,verbs=*
 
 // Reconcile is part of the main kubernetes reconciliation loop which aims to
 // move the current state of the cluster closer to the desired state.
@@ -61,7 +55,8 @@ func (r *KubeBenchReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 	logs.Info("starting KubeBench audit")
 
 	kubebench := &kubeeyev1alpha1.KubeBench{}
-	if err := r.Get(ctx, req.NamespacedName, kubebench); err != nil {
+	err := r.Get(ctx, req.NamespacedName, kubebench)
+	if err != nil {
 		if kubeErr.IsNotFound(err) {
 			logs.Info("Cluster resource not found. Ignoring since object must be deleted")
 			return ctrl.Result{}, nil
@@ -69,13 +64,12 @@ func (r *KubeBenchReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 	}
 
 	KubeBenchAudit := audit.KubeBenchAudit(logs)
-
-	keControls := formatResults(KubeBenchAudit)
-
-	kubebench.Status.Controls = keControls
+	keControls := format.ResultsFormat(KubeBenchAudit)
+	kubebench.Status.AuditResults = keControls
 
 	// update CR status,
-	if err := r.Status().Update(ctx, kubebench); err != nil {
+	err = r.Status().Update(ctx, kubebench)
+	if err != nil {
 		logs.Error(err, "Update CR Status failed")
 		return ctrl.Result{}, err
 	}
@@ -101,32 +95,4 @@ func (r *KubeBenchReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&kubeeyev1alpha1.KubeBench{}).
 		Complete(r)
-}
-
-func formatResults(KubeBenchAudit audit.KubeBenchResponse) (keControls []kubeeyev1alpha1.Controls) {
-	for _, controls := range KubeBenchAudit.Controls {
-		var keControl kubeeyev1alpha1.Controls
-		keControl.Version = controls.Version
-		keControl.Text = controls.Text
-		keControl.Summary = controls.Summary
-		for _, group := range controls.Groups {
-			var keGroup kubeeyev1alpha1.Group
-			keGroup.ID = group.ID
-			keGroup.Text = group.Text
-			for _, checks := range group.Checks {
-				if checks.State != "PASS" {
-					var keCheck kubeeyev1alpha1.Check
-					keCheck.ID = checks.ID
-					keCheck.Text = checks.Text
-					keCheck.Remediation = checks.Remediation
-					keCheck.State = checks.State
-					keGroup.Checks = append(keGroup.Checks, keCheck)
-				}
-			}
-			keControl.Groups = append(keControl.Groups, keGroup)
-		}
-		keControls = append(keControls, keControl)
-	}
-
-	return keControls
 }

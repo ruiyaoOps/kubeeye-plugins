@@ -3,4 +3,4 @@ kind: KubeBench
 metadata:
   name: kubebench-sample
 spec:
-  auditPeriod: 24h
+  # TODO(user): Add fields here

@@ -45,71 +45,44 @@ spec:
           status:
             description: KubeBenchStatus defines the observed state of KubeBench
             properties:
-              controls:
+              auditResults:
                 description: 'INSERT ADDITIONAL STATUS FIELD - define observed state
                   of cluster Important: Run "make" to regenerate code after modifying
                   this file'
                 items:
                   properties:
-                    groups:
+                    namespace:
+                      type: string
+                    resultInfos:
                       items:
                         properties:
-                          groupid:
-                            type: string
-                          results:
-                            items:
-                              properties:
-                                desc:
-                                  type: string
-                                id:
-                                  type: string
-                                remediation:
-                                  type: string
-                                status:
-                                  description: State is the state of a control check.
-                                  type: string
-                              required:
-                              - desc
-                              - id
-                              - remediation
-                              - status
-                              type: object
-                            type: array
-                          type:
+                          resourceInfos:
+                            properties:
+                              items:
+                                items:
+                                  properties:
+                                    level:
+                                      type: string
+                                    message:
+                                      type: string
+                                    reason:
+                                      type: string
+                                  type: object
+                                type: array
+                              name:
+                                type: string
+                            required:
+                            - items
+                            type: object
+                          resourceType:
                             type: string
                         required:
-                        - groupid
-                        - results
-                        - type
+                        - resourceInfos
+                        - resourceType
                         type: object
                       type: array
-                    summary:
-                      description: Summary is a summary of the results of control
-                        checks run.
-                      properties:
-                        total_fail:
-                          type: integer
-                        total_info:
-                          type: integer
-                        total_pass:
-                          type: integer
-                        total_warn:
-                          type: integer
-                      required:
-                      - total_fail
-                      - total_info
-                      - total_pass
-                      - total_warn
-                      type: object
-                    text:
-                      type: string
-                    version:
-                      type: string
                   required:
-                  - groups
-                  - summary
-                  - text
-                  - version
+                  - namespace
                   type: object
                 type: array
             type: object
