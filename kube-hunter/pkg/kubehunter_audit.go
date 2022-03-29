@@ -10,8 +10,6 @@ import (
     "github.com/pkg/errors"
 )
 
-
-
 func KubeHunterAudit() (err error, result KubeHunterResults) {
     cmd := exec.Command("kube-hunter", "--pod", "--report", "json")
     stdout, err := cmd.StdoutPipe()

@@ -25,6 +25,7 @@ type Vulnerabilitie struct {
     Description string  `json:"description"`
     Evidence    string  `json:"evidence"`
     Avd_reference string    `json:"avd_reference"`
+    Hunter       string     `json:"hunter"`
 }
 
 type PluginsResults struct {
