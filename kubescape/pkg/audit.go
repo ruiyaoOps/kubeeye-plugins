@@ -8,8 +8,6 @@ import (
 	"os/exec"
 	"strings"
 
-	"reflect"
-
 	"github.com/armosec/opa-utils/reporthandling"
 	"github.com/pkg/errors"
 )
@@ -63,18 +61,10 @@ func FormatResult(results []reporthandling.FrameworkReport) (pluginResults Plugi
 						if k8SApiObject["relatedObjects"] == nil {
 							continue
 						}
-
-						if reflect.TypeOf(k8SApiObject["relatedObjects"]).Kind() == reflect.Slice {
-
-							bcd := reflect.ValueOf(k8SApiObject["relatedObjects"])
-							for i := 0; i < bcd.Len(); i++ {
-
-								resourcesss := bcd.Index(i).Interface().(map[string]interface{})
-								fmt.Printf("resourcesss is : %+v \n",resourcesss["kind"])
-								fmt.Printf("resourcesss is : %+v \n",resourcesss["name"])
-								fmt.Printf("resourcesss is : %+v \n",resourcesss["namespace"])
-							}
-						}
+						name := k8SApiObject["relatedObjects"].(map[string]interface{})["name"]
+						fmt.Printf("name: %+v\n", name)
+						kind := k8SApiObject["relatedObjects"].(map[string]interface{})["kind"]
+						fmt.Print("namespace: %+v \n", kind)
 					}
 				}
 			}
