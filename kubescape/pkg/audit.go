@@ -8,11 +8,10 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/armosec/opa-utils/reporthandling"
 	"github.com/pkg/errors"
 )
 
-func KubescapeAudit() (err error, auditResults []reporthandling.FrameworkReport) {
+func KubescapeAudit() (err error, auditResults []FrameworkReport) {
 	cmd := exec.Command("kubescape", "scan", "-e", "kube-system", "-f", "json")
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
@@ -46,25 +45,22 @@ func KubescapeAudit() (err error, auditResults []reporthandling.FrameworkReport)
 	return nil, auditResults
 }
 
-func FormatResult(results []reporthandling.FrameworkReport) (pluginResults PluginsResults) {
+func FormatResult(results []FrameworkReport) (pluginResults PluginsResults) {
 	for _, result := range results {
 		if result.FailedResources == 0 && result.WarningResources == 0 {
 			continue
 		}
-
 		for _, reports := range result.ControlReports {
 			for _, ruleReport := range reports.RuleReports {
 				for _, ruleRespons := range ruleReport.RuleResponses {
 					k8SApiObjects := ruleRespons.AlertObject.K8SApiObjects
-					//g := ruleRespons.AlertObject.ExternalObjects
-					for _, k8SApiObject := range k8SApiObjects {
-						if k8SApiObject["relatedObjects"] == nil {
-							continue
-						}
-						name := k8SApiObject["relatedObjects"].(map[string]interface{})["name"]
-						fmt.Printf("name: %+v\n", name)
-						kind := k8SApiObject["relatedObjects"].(map[string]interface{})["kind"]
-						fmt.Print("namespace: %+v \n", kind)
+					for _, object := range k8SApiObjects {
+						a := object.GetName()
+						b := object.GetNamespace()
+						c := object.GetKind()
+						fmt.Printf("name: %+v\n", a)
+						fmt.Printf("namespace: %+v\n", b)
+						fmt.Printf("kind: %+v\n", c)
 					}
 				}
 			}
