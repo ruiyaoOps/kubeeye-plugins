@@ -55,6 +55,7 @@ func FormatResult(results []FrameworkReport) (pluginResults PluginsResults) {
 				for _, ruleRespons := range ruleReport.RuleResponses {
 					k8SApiObjects := ruleRespons.AlertObject.K8SApiObjects
 					for _, object := range k8SApiObjects {
+						fmt.Println(object)
 						a := object.GetName()
 						b := object.GetNamespace()
 						c := object.GetKind()
