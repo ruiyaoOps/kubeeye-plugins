@@ -91,6 +91,13 @@ type AlertScore float32
 
 
 type AlertObject struct {
-	K8SApiObjects   []unstructured.Unstructured `json:"k8sApiObjects,omitempty"`
+	K8SApiObjects   []K8SObject `json:"k8sApiObjects,omitempty"`
 	ExternalObjects map[string]interface{}   `json:"externalObjects,omitempty"`
+}
+
+type K8SObject struct {
+	apiGroup string `json:"apiGroup"`
+	kind string `json:"kind"`
+	name string `json:"name"`
+	relatedObjects unstructured.Unstructured `json:"relatedObjects"`
 }

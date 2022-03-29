@@ -56,9 +56,9 @@ func FormatResult(results []FrameworkReport) (pluginResults PluginsResults) {
 					k8SApiObjects := ruleRespons.AlertObject.K8SApiObjects
 					for _, object := range k8SApiObjects {
 						fmt.Println(object)
-						a := object.GetName()
-						b := object.GetNamespace()
-						c := object.GetKind()
+						a := object.relatedObjects.GetName()
+						b := object.relatedObjects.GetNamespace()
+						c := object.relatedObjects.GetKind()
 						fmt.Printf("name: %+v\n", a)
 						fmt.Printf("namespace: %+v\n", b)
 						fmt.Printf("kind: %+v\n", c)
