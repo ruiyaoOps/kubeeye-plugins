@@ -57,43 +57,33 @@ func FormatResult(results []reporthandling.FrameworkReport) (pluginResults Plugi
 		for _, reports := range result.ControlReports {
 			for _, ruleReport := range reports.RuleReports {
 				for _, ruleRespons := range ruleReport.RuleResponses {
-					//failedResources := ruleRespons.GetFailedResources()
-					//for _, failedResource := range failedResources {
-					//	kind := failedResource["kind"]
-					//	name := failedResource["name"]
-					//	if kind == "Group" && name == "system:masters"{
-					//		kind = "ClusterRoleBinding"
-					//
-					//	}
-					//	namespace := failedResource["namespace"]
-					//
-					//	fmt.Printf("get result kind: %+v\n", kind)
-					//	fmt.Printf("get result name: %+v\n", name)
-					//	fmt.Printf("get result namespace: %+v\n", namespace)
-					//
-					//}
 					k8SApiObjects := ruleRespons.AlertObject.K8SApiObjects
 					//g := ruleRespons.AlertObject.ExternalObjects
 					for _, k8SApiObject := range k8SApiObjects {
 						if k8SApiObject["relatedObjects"] == nil {
 							continue
 						}
-						abc := reflect.TypeOf(k8SApiObject["relatedObjects"]).Kind()
-						fmt.Printf("abc is : %+v", abc)
-						bcd := reflect.ValueOf(k8SApiObject["relatedObjects"])
-						fmt.Printf("bcd is : %+v",  bcd)
-						for i := 0; i < bcd.Len(); i++ {
-							fmt.Printf("abcdefg is : %+v \n",bcd.Index(i))
+
+						if reflect.TypeOf(k8SApiObject["relatedObjects"]).Kind() == reflect.Slice {
+
+							bcd := reflect.ValueOf(k8SApiObject["relatedObjects"])
+							for i := 0; i < bcd.Len(); i++ {
+
+								resourcesss := bcd.Index(i).Interface().(map[string]interface{})
+								fmt.Printf("resourcesss is : %+v \n",resourcesss["kind"])
+								fmt.Printf("resourcesss is : %+v \n",resourcesss["name"])
+								fmt.Printf("resourcesss is : %+v \n",resourcesss["namespace"])
+							}
 						}
 					}
 				}
 			}
-			level := "warning"
-			message := reports.Name
-			reason := reports.Description
-			fmt.Printf("get result level: %+v\n", level)
-			fmt.Printf("get result message: %+v\n", message)
-			fmt.Printf("get result reason: %+v\n", reason)
+			//level := "warning"
+			//message := reports.Name
+			//reason := reports.Description
+			//fmt.Printf("get result level: %+v\n", level)
+			//fmt.Printf("get result message: %+v\n", message)
+			//fmt.Printf("get result reason: %+v\n", reason)
 		}
 	}
 	return pluginResults
