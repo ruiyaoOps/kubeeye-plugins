@@ -12,7 +12,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-func KubescapeAudit() (err error, auditResults []FrameworkReport) {
+func KubescapeAudit() (err error, auditResults []reporthandling.FrameworkReport) {
 	cmd := exec.Command("kubescape", "scan", "-e", "kube-system", "-f", "json")
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
