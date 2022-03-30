@@ -8,6 +8,7 @@ import (
 	"os/exec"
 	"strings"
 
+	"github.com/armosec/opa-utils/reporthandling"
 	"github.com/pkg/errors"
 )
 
@@ -45,7 +46,7 @@ func KubescapeAudit() (err error, auditResults []FrameworkReport) {
 	return nil, auditResults
 }
 
-func FormatResult(results []FrameworkReport) (pluginResults PluginsResults) {
+func FormatResult(results []reporthandling.FrameworkReport) (pluginResults PluginsResults) {
 	for _, result := range results {
 		if result.FailedResources == 0 && result.WarningResources == 0 {
 			continue
@@ -55,13 +56,7 @@ func FormatResult(results []FrameworkReport) (pluginResults PluginsResults) {
 				for _, ruleRespons := range ruleReport.RuleResponses {
 					k8SApiObjects := ruleRespons.AlertObject.K8SApiObjects
 					for _, object := range k8SApiObjects {
-						fmt.Println(object)
-						a := object.relatedObjects.GetName()
-						b := object.relatedObjects.GetNamespace()
-						c := object.relatedObjects.GetKind()
-						fmt.Printf("name: %+v\n", a)
-						fmt.Printf("namespace: %+v\n", b)
-						fmt.Printf("kind: %+v\n", c)
+						GetField(object, "kind")
 					}
 				}
 			}
@@ -74,4 +69,26 @@ func FormatResult(results []FrameworkReport) (pluginResults PluginsResults) {
 		}
 	}
 	return pluginResults
+}
+
+func GetField(object map[string]interface{}, field string)  {
+	var val interface{} = object
+	var vals []string
+	if m, ok := val.(map[string]interface{}); ok {
+		val ,ok = m["relatedObjects"]
+	}
+	if m, ok := val.([]map[string]interface{}); ok {
+		for _, m2 := range m {
+			val , ok = m2[field]
+			if !ok {
+				fmt.Println("get failed")
+			}
+			m3 ,ok := val.(string)
+			if !ok {
+				fmt.Println("get failed2")
+			}
+			vals = append(vals, m3)
+		}
+	}
+	fmt.Printf("vals is %+v \n",vals)
 }
