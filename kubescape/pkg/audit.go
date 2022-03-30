@@ -56,7 +56,8 @@ func FormatResult(results []reporthandling.FrameworkReport) (pluginResults Plugi
 				for _, ruleRespons := range ruleReport.RuleResponses {
 					k8SApiObjects := ruleRespons.AlertObject.K8SApiObjects
 					for _, object := range k8SApiObjects {
-						GetField(object, "kind")
+						a := GetField(object, "kind")
+						fmt.Println(a)
 					}
 				}
 			}
@@ -71,24 +72,31 @@ func FormatResult(results []reporthandling.FrameworkReport) (pluginResults Plugi
 	return pluginResults
 }
 
-func GetField(object map[string]interface{}, field string)  {
+func GetField(object map[string]interface{}, field string) string {
 	var val interface{} = object
 	var vals []string
 	if m, ok := val.(map[string]interface{}); ok {
 		val ,ok = m["relatedObjects"]
+		if !ok {
+			fmt.Println("get failed")
+			return ""
+		}
 	}
 	if m, ok := val.([]map[string]interface{}); ok {
 		for _, m2 := range m {
 			val , ok = m2[field]
 			if !ok {
-				fmt.Println("get failed")
+				fmt.Println("get failed2")
+				return ""
 			}
 			m3 ,ok := val.(string)
 			if !ok {
-				fmt.Println("get failed2")
+				fmt.Println("get failed3")
+				return ""
 			}
 			vals = append(vals, m3)
 		}
 	}
 	fmt.Printf("vals is %+v \n",vals)
+	return ""
 }
