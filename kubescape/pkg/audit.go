@@ -56,7 +56,7 @@ func FormatResult(results []reporthandling.FrameworkReport) (pluginResults Plugi
 				for _, ruleRespons := range ruleReport.RuleResponses {
 					k8SApiObjects := ruleRespons.AlertObject.K8SApiObjects
 					for _, object := range k8SApiObjects {
-						GetField(object, "kind")
+						GetField(object, "")
 					}
 				}
 			}
@@ -77,11 +77,9 @@ func GetField(object map[string]interface{}, field string) {
 		val ,ok = m["relatedObjects"]
 		if !ok {
 			fmt.Println("get failed")
+		} else {
+			fmt.Printf("relatedObjects %+v", val)
 		}
-	}
-
-	if m, ok := val.([]map[string]interface{}); ok {
-		fmt.Printf("val %+v \n", m)
 	}
 
 	//if m, ok := val.([]map[string]interface{}); ok {
