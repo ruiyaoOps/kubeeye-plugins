@@ -78,8 +78,18 @@ func GetField(object map[string]interface{}, field string) {
 		if !ok {
 			fmt.Println("get failed")
 		}
-		fmt.Printf("relatedObjects %+v \n",val)
 	}
+
+	if m, ok := val.([]map[string]interface{}); ok {
+		for _, m2 := range m {
+			val ,ok = m2["kind"]
+			if !ok {
+				fmt.Println("get failed")
+			}
+			fmt.Printf("val %+v \n", val)
+		}
+	}
+
 	//if m, ok := val.([]map[string]interface{}); ok {
 	//	for _, m2 := range m {
 	//		val , ok = m2[field]
